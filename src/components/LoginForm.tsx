@@ -1,49 +1,99 @@
-// 1. Importamos o Hook de estado de dentro da biblioteca principal do React
 import { useState } from 'react';
 
 export function LoginForm() {
-
-  // 2. DECLARAÇÃO DO ESTADO (A Memória RAM)
-  // A sintaxe é uma desestruturação de Array: [variável_de_leitura, função_para_alterar]
+  // 1. Estados de Dados
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  // 3. A Função que intercepta o envio do formulário (O Controller do Front-end)
-  const lidarComSubmit = (evento: React.FormEvent) => {
-    evento.preventDefault(); // Impede o navegador de recarregar a página (Comportamento clássico do HTML)
+  // 2. Estados de Interface
+  const [erro, setErro] = useState<string | null>(null);
+  const [carregando, setCarregando] = useState(false);
 
-    // Aqui temos a garantia absoluta de que as variáveis contêm o que o usuário digitou
-    console.log('Tentativa de Login interceptada!');
-    console.log('E-mail capturado:', email);
-    console.log('Senha capturada:', senha);
+  // 3. Função de comunicação com o Back-end
+  const lidarComSubmit = async (evento: React.FormEvent) => {
+    evento.preventDefault();
 
-    // No próximo módulo, enviaremos isso para a porta 3000 (Nosso Back-end)
+    setErro(null);
+    setCarregando(true);
+
+    try {
+      const resposta = await fetch(
+        'http://localhost:3000/api/usuarios/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, senha })
+        }
+      );
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        console.log('🟢 Login Aprovado!', dados);
+
+        alert(
+          `Bem-vindo, ${dados.nome}! (Olhe o Console F12 para ver o Token)`
+        );
+
+        // Na próxima entrega, o Token será guardado
+        // e o usuário será redirecionado para o Dashboard.
+      } else {
+        setErro(dados.erro || 'Falha na autenticação.');
+      }
+    } catch (error) {
+      setErro(
+        'Servidor inoperante. Verifique se o Back-end está rodando.'
+      );
+
+      console.error('Erro Kamikase de Rede:', error);
+    } finally {
+      setCarregando(false);
+    }
   };
 
   return (
-    <form onSubmit={lidarComSubmit} className="bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700 w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-6 text-center">Acesso ao Sistema</h2>
+    <form
+      onSubmit={lidarComSubmit}
+      className="bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700 w-full max-w-md mx-auto"
+    >
+      <h2 className="text-2xl font-bold text-white mb-6 text-center">
+        Acesso ao Sistema
+      </h2>
+
+      {/* ÁREA DE FEEDBACK: Só aparece se a variável erro tiver texto */}
+      {erro && (
+        <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded mb-4 text-sm font-medium text-center">
+          🔴 {erro}
+        </div>
+      )}
 
       <div className="mb-4">
-        <label className="block text-slate-400 text-sm font-bold mb-2" htmlFor="email">
+        <label
+          className="block text-slate-400 text-sm font-bold mb-2"
+          htmlFor="email"
+        >
           E-mail Corporativo
         </label>
 
         <input
           id="email"
           type="email"
-          // O valor do input está amarrado ao Estado (O HTML é escravo do React)
           value={email}
-          // Quando o usuário digita, avisamos o React para atualizar o Estado
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-3 rounded bg-slate-900 border border-slate-600 text-white focus:outline-none focus:border-cyan-500 transition"
           placeholder="soldado@kamikase.com"
           required
+          disabled={carregando}
         />
       </div>
 
       <div className="mb-6">
-        <label className="block text-slate-400 text-sm font-bold mb-2" htmlFor="senha">
+        <label
+          className="block text-slate-400 text-sm font-bold mb-2"
+          htmlFor="senha"
+        >
           Senha
         </label>
 
@@ -55,14 +105,20 @@ export function LoginForm() {
           className="w-full p-3 rounded bg-slate-900 border border-slate-600 text-white focus:outline-none focus:border-cyan-500 transition"
           placeholder="********"
           required
+          disabled={carregando}
         />
       </div>
 
       <button
         type="submit"
-        className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded transition"
+        disabled={carregando}
+        className={`w-full font-bold py-3 px-4 rounded transition flex justify-center items-center ${
+          carregando
+            ? 'bg-slate-600 cursor-not-allowed text-slate-400'
+            : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+        }`}
       >
-        Entrar no Quartel
+        {carregando ? 'Autenticando...' : 'Entrar no Quartel'}
       </button>
     </form>
   );
