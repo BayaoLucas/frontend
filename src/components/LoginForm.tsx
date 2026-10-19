@@ -47,7 +47,7 @@ export function LoginForm() {
         'Servidor inoperante. Verifique se o Back-end está rodando.'
       );
 
-      console.error('Erro Kamikase de Rede:', error);
+      console.error('Erro de Rede:', error);
     } finally {
       setCarregando(false);
     }
