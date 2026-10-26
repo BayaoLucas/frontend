@@ -6,20 +6,7 @@ import {
   Routes
 } from 'react-router-dom';
 
-
-function FundoAurora() {
-  return (
-    <div className="aurora-container" aria-hidden="true">
-      <div className="aurora-stars" />
-      <div className="aurora-streamer aurora-streamer--green-1" />
-      <div className="aurora-streamer aurora-streamer--violet-1" />
-      <div className="aurora-streamer aurora-streamer--green-2" />
-      <div className="aurora-streamer aurora-streamer--purple-2" />
-      <div className="aurora-glow" />
-    </div>
-  );
-}
-
+import { FundoAurora } from './components/FundoAurora';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import './Styles/global.css';
@@ -32,6 +19,7 @@ import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Produtos } from './pages/Produtos';
 import { Vendas } from './pages/Vendas';
+import { Usuarios } from './pages/Usuarios';
 
 import { obterUsuarioSalvo } from './services/api';
 
@@ -72,6 +60,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/produtos" element={<Produtos />} />
               <Route path="/vendas" element={<Vendas />} />
+              <Route path="/usuarios" element={<Usuarios />} />
             </Route>
 
             <Route

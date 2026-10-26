@@ -15,6 +15,7 @@ export function Header() {
 
   const usuario = obterUsuarioSalvo();
   const estaNoLogin = location.pathname === '/';
+  const eGerente = usuario?.perfil === 'GERENTE';
 
   async function sair() {
     setSaindo(true);
@@ -81,6 +82,19 @@ export function Header() {
               Vendas
             </Link>
 
+            {eGerente && (
+              <Link
+                to="/usuarios"
+                className={`rounded-lg px-3 py-1.5 font-medium transition-all ${
+                  location.pathname === '/usuarios'
+                    ? 'border border-purple-500/35 bg-purple-500/20 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.25)]'
+                    : 'text-slate-300 hover:bg-purple-500/10 hover:text-purple-300'
+                }`}
+              >
+                Usuários
+              </Link>
+            )}
+
             <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-3 py-1 text-xs font-semibold text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
               {usuario.nome} ({usuario.perfil})
             </span>
@@ -99,4 +113,3 @@ export function Header() {
     </header>
   );
 }
-
