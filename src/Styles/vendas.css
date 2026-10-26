@@ -1,0 +1,284 @@
+
+.sales-page {
+    display: grid;
+    gap: 22px;
+  }
+  
+  .sales-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.8fr);
+    align-items: start;
+    gap: 22px;
+  }
+  
+  .sales-main,
+  .sales-sidebar {
+    display: grid;
+    gap: 20px;
+    min-width: 0;
+  }
+  
+  .sales-card {
+    min-width: 0;
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+  }
+  
+  .sales-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .sales-card-heading p {
+    margin-top: 4px;
+    font-size: 0.85rem;
+  }
+  
+  .sales-step-icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    place-items: center;
+    color: var(--aurora-cyan);
+    background: rgba(103, 232, 249, 0.08);
+    border: 1px solid var(--border-color);
+    border-radius: 13px;
+  }
+  
+  .sales-product-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 110px auto;
+    align-items: end;
+    gap: 12px;
+  }
+  
+  .sales-field {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+  }
+  
+  .sales-field label {
+    margin: 0;
+  }
+  
+  .sales-field input,
+  .sales-field select {
+    min-height: 44px;
+  }
+  
+  .sales-cart {
+    display: grid;
+    gap: 0;
+  }
+  
+  .sales-cart-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .sales-cart-item:last-child {
+    border-bottom: 0;
+  }
+  
+  .sales-cart-product {
+    min-width: 0;
+  }
+  
+  .sales-cart-product strong {
+    display: block;
+    overflow-wrap: anywhere;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+  }
+  
+  .sales-cart-product span {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  
+  .sales-cart-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .sales-quantity {
+    width: 72px;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .sales-remove {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 7px;
+    color: var(--danger);
+    background: rgba(251, 113, 133, 0.07);
+    border-color: rgba(251, 113, 133, 0.15);
+  }
+  
+  .sales-remove:hover {
+    background: rgba(251, 113, 133, 0.15);
+  }
+  
+  .sales-summary {
+    position: sticky;
+    top: 96px;
+  }
+  
+  .sales-summary-lines {
+    display: grid;
+    gap: 13px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .sales-summary-line {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+  
+  .sales-summary-line strong {
+    color: var(--text-primary);
+    text-align: right;
+  }
+  
+  .sales-discount {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 100px;
+    align-items: end;
+    gap: 12px;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .sales-total {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 22px;
+  }
+  
+  .sales-total span {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  
+  .sales-total strong {
+    color: var(--aurora-green);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+  
+  .sales-payment {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  
+  .sales-checkout {
+    display: grid;
+    gap: 10px;
+  }
+  
+  .sales-checkout button {
+    width: 100%;
+    min-height: 48px;
+  }
+  
+  .sales-manager-auth {
+    display: grid;
+    gap: 14px;
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(251, 191, 36, 0.045);
+    border: 1px solid rgba(251, 191, 36, 0.17);
+    border-radius: var(--radius-md);
+  }
+  
+  .sales-manager-auth p {
+    font-size: 0.83rem;
+  }
+  
+  .sales-feedback {
+    margin-top: 14px;
+  }
+  
+  .sales-empty {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  
+  .sales-empty-icon {
+    display: grid;
+    width: 54px;
+    height: 54px;
+    place-items: center;
+    color: var(--aurora-cyan);
+    background: rgba(103, 232, 249, 0.07);
+    border-radius: 50%;
+  }
+  
+  @media (max-width: 980px) {
+    .sales-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  
+    .sales-summary {
+      position: static;
+    }
+  }
+  
+  @media (max-width: 560px) {
+    .sales-card {
+      padding: 17px;
+    }
+  
+    .sales-product-form {
+      grid-template-columns: minmax(0, 1fr) 90px;
+    }
+  
+    .sales-product-form button {
+      grid-column: 1 / -1;
+    }
+  
+    .sales-cart-item {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  
+    .sales-cart-controls {
+      justify-content: flex-start;
+    }
+  
+    .sales-discount {
+      grid-template-columns: minmax(0, 1fr) 90px;
+    }
+  }
+  

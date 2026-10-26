@@ -1,38 +1,72 @@
-// 1. Importamos as ferramentas de roteamento da biblioteca
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes
+} from 'react-router-dom';
 
-// 2. Importamos os nossos layouts fixos
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-
-// 3. Importamos as nossas Páginas cheias
+import './styles/global.css';
+import './styles/aurora.css';
+import './styles/layout.css';
+import './styles/login.css';
+import './styles/dashboard.css';
+import './styles/produtos.css';
+import './styles/vendas.css';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { Produtos } from './pages/Produtos.tsx';
+import { Vendas } from './pages/Vendas.tsx';
+
+import { obterUsuarioSalvo } from './services/api';
+
+function RotaProtegida() {
+  const token = localStorage.getItem('ms2_token');
+  const usuario = obterUsuarioSalvo();
+
+  if (!token || !usuario) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+}
+
+function RotaPublica() {
+  const token = localStorage.getItem('ms2_token');
+  const usuario = obterUsuarioSalvo();
+
+  if (token && usuario) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Login />;
+}
 
 function App() {
   return (
-    // O BrowserRouter liga o monitoramento da URL do navegador
     <BrowserRouter>
-      <div className="min-h-screen bg-slate-900 flex flex-col">
-
-        {/* O Header fica fixo no topo, independente da página que mudar abaixo */}
+      <div className="flex min-h-screen flex-col bg-slate-950 text-white">
         <Header />
 
-        {/* Área dinâmica que vai trocar de conteúdo baseada na rota */}
-        <main className="flex-grow w-full max-w-6xl mx-auto p-8 flex items-center justify-center">
-
-          {/* O container Routes decide qual Route bate com a URL atual */}
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
           <Routes>
-            {/* Se a URL for exatamente "/", renderiza a tela de Login */}
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<RotaPublica />} />
 
-            {/* Se a URL for "/dashboard", renderiza o Painel de Controle */}
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route element={<RotaProtegida />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/produtos" element={<Produtos />} />
+              <Route path="/vendas" element={<Vendas />} />
+            </Route>
+
+            <Route
+              path="*"
+              element={<Navigate to="/dashboard" replace />}
+            />
           </Routes>
-
         </main>
 
-        {/* O Footer fica fixo na base do sistema */}
         <Footer />
       </div>
     </BrowserRouter>

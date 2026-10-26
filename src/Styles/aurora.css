@@ -1,0 +1,201 @@
+
+.aurora-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 50% 0%, #132342 0%, transparent 48%),
+      linear-gradient(180deg, #080d1a 0%, #090f1e 50%, #080d1a 100%);
+    isolation: isolate;
+  }
+  
+  .aurora-background::before,
+  .aurora-background::after {
+    position: absolute;
+    inset: -25%;
+    content: '';
+    pointer-events: none;
+    will-change: transform;
+  }
+  
+  .aurora-background::before {
+    background:
+      radial-gradient(
+        ellipse at 24% 35%,
+        rgba(45, 212, 191, 0.13) 0%,
+        transparent 32%
+      ),
+      radial-gradient(
+        ellipse at 72% 26%,
+        rgba(96, 165, 250, 0.13) 0%,
+        transparent 34%
+      ),
+      radial-gradient(
+        ellipse at 50% 70%,
+        rgba(139, 92, 246, 0.09) 0%,
+        transparent 38%
+      );
+    filter: blur(55px);
+    animation: aurora-drift 24s ease-in-out infinite alternate;
+  }
+  
+  .aurora-background::after {
+    background:
+      radial-gradient(
+        ellipse at 35% 45%,
+        rgba(45, 212, 191, 0.1) 0%,
+        transparent 25%
+      ),
+      radial-gradient(
+        ellipse at 65% 40%,
+        rgba(99, 102, 241, 0.1) 0%,
+        transparent 28%
+      );
+    filter: blur(75px);
+    animation: aurora-drift-reverse 32s ease-in-out infinite alternate;
+  }
+  
+  .aurora-stars {
+    position: absolute;
+    inset: 0;
+    opacity: 0.65;
+    background-image:
+      radial-gradient(1px 1px at 8% 14%, #ffffff 98%, transparent),
+      radial-gradient(1.5px 1.5px at 18% 62%, #dbeafe 98%, transparent),
+      radial-gradient(1px 1px at 29% 28%, #ffffff 98%, transparent),
+      radial-gradient(1.5px 1.5px at 42% 77%, #a5f3fc 98%, transparent),
+      radial-gradient(1px 1px at 53% 16%, #ffffff 98%, transparent),
+      radial-gradient(1px 1px at 67% 52%, #e0e7ff 98%, transparent),
+      radial-gradient(1.5px 1.5px at 78% 23%, #ffffff 98%, transparent),
+      radial-gradient(1px 1px at 91% 68%, #a5f3fc 98%, transparent),
+      radial-gradient(1px 1px at 86% 89%, #ffffff 98%, transparent),
+      radial-gradient(1px 1px at 12% 85%, #c4b5fd 98%, transparent);
+    background-size: 340px 280px;
+    animation: stars-twinkle 7s ease-in-out infinite alternate;
+  }
+  
+  .aurora-ribbon {
+    position: absolute;
+    top: -20%;
+    left: -15%;
+    width: 130%;
+    height: 65%;
+    border-radius: 50%;
+    opacity: 0.3;
+    filter: blur(55px);
+    transform: rotate(-12deg);
+    transform-origin: center;
+  }
+  
+  .aurora-ribbon--green {
+    background: linear-gradient(
+      110deg,
+      transparent 15%,
+      rgba(45, 212, 191, 0.04) 30%,
+      rgba(45, 212, 191, 0.34) 43%,
+      rgba(94, 234, 212, 0.08) 55%,
+      transparent 75%
+    );
+    animation: ribbon-flow 19s ease-in-out infinite alternate;
+  }
+  
+  .aurora-ribbon--blue {
+    top: -12%;
+    left: 5%;
+    opacity: 0.22;
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgba(96, 165, 250, 0.05) 36%,
+      rgba(96, 165, 250, 0.3) 48%,
+      rgba(129, 140, 248, 0.08) 60%,
+      transparent 78%
+    );
+    animation: ribbon-flow-reverse 25s ease-in-out infinite alternate;
+  }
+  
+  .aurora-ribbon--purple {
+    top: -5%;
+    left: -20%;
+    opacity: 0.18;
+    background: linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(167, 139, 250, 0.03) 35%,
+      rgba(167, 139, 250, 0.3) 49%,
+      transparent 72%
+    );
+    animation: ribbon-flow 29s ease-in-out infinite alternate-reverse;
+  }
+  
+  @keyframes aurora-drift {
+    0% {
+      transform: translate3d(-3%, -2%, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(3%, 2%, 0) scale(1.08);
+    }
+    100% {
+      transform: translate3d(-1%, 4%, 0) scale(1.03);
+    }
+  }
+  
+  @keyframes aurora-drift-reverse {
+    0% {
+      transform: translate3d(3%, 2%, 0) scale(1.04);
+    }
+    100% {
+      transform: translate3d(-4%, -3%, 0) scale(1.1);
+    }
+  }
+  
+  @keyframes ribbon-flow {
+    0% {
+      transform: translate3d(-2%, 0, 0) rotate(-12deg) scaleX(0.95);
+    }
+    100% {
+      transform: translate3d(3%, 6%, 0) rotate(-5deg) scaleX(1.08);
+    }
+  }
+  
+  @keyframes ribbon-flow-reverse {
+    0% {
+      transform: translate3d(3%, 3%, 0) rotate(-8deg) scaleX(1.04);
+    }
+    100% {
+      transform: translate3d(-3%, -2%, 0) rotate(-15deg) scaleX(0.96);
+    }
+  }
+  
+  @keyframes stars-twinkle {
+    0% {
+      opacity: 0.35;
+    }
+    100% {
+      opacity: 0.8;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .aurora-ribbon {
+      filter: blur(38px);
+      opacity: 0.2;
+    }
+  
+    .aurora-background::before,
+    .aurora-background::after {
+      filter: blur(45px);
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .aurora-background::before,
+    .aurora-background::after,
+    .aurora-stars,
+    .aurora-ribbon {
+      animation: none !important;
+    }
+  }
+  

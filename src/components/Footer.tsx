@@ -1,8 +1,9 @@
 export function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-500 text-center p-4 border-t border-slate-800 mt-auto">
+    <footer className="mt-auto border-t border-slate-800 bg-slate-900 p-4 text-center text-sm text-slate-500">
       <p>
-        &copy; {new Date().getFullYear()} Projeto Kamikase. Todos os direitos reservados.
+        &copy; {new Date().getFullYear()} MS² Vestuário.
+        Sistema de gerenciamento de vendas.
       </p>
     </footer>
   );

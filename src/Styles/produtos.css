@@ -1,0 +1,137 @@
+
+.products-page {
+    display: grid;
+    gap: 22px;
+  }
+  
+  .products-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  
+  .products-search {
+    width: min(100%, 380px);
+  }
+  
+  .products-search input {
+    min-height: 44px;
+  }
+  
+  .products-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+  }
+  
+  .products-form-title {
+    grid-column: 1 / -1;
+    margin-bottom: 2px;
+  }
+  
+  .products-field {
+    display: grid;
+    align-content: start;
+    gap: 7px;
+    min-width: 0;
+  }
+  
+  .products-field-full {
+    grid-column: 1 / -1;
+  }
+  
+  .products-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+  
+  .products-table-card {
+    min-width: 0;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+  }
+  
+  .products-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .products-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .product-name {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+  
+  .product-code {
+    color: var(--text-muted);
+    font-family: monospace;
+    font-size: 0.8rem;
+  }
+  
+  .product-price {
+    color: var(--aurora-green);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .stock-low {
+    color: var(--warning);
+    font-weight: 600;
+  }
+  
+  .stock-empty {
+    color: var(--danger);
+    font-weight: 600;
+  }
+  
+  .products-empty {
+    padding: 44px 20px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  
+  @media (max-width: 640px) {
+    .products-form {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 18px;
+    }
+  
+    .products-form-title,
+    .products-field-full,
+    .products-form-actions {
+      grid-column: 1;
+    }
+  
+    .products-form-actions {
+      justify-content: stretch;
+    }
+  
+    .products-form-actions button {
+      flex: 1;
+    }
+  
+    .products-table-header {
+      padding: 18px;
+    }
+  }
+  
