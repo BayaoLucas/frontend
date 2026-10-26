@@ -1,201 +1,329 @@
+/* ========================================================
+   AURORA BOREALIS LIVING SKY & ATMOSPHERE
+   Paleta: Verde Esmeralda, Menta Néon, Ciano Ártico, Violeta e Roxo
+   ======================================================== */
 
-.aurora-background {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    overflow: hidden;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse at 50% 0%, #132342 0%, transparent 48%),
-      linear-gradient(180deg, #080d1a 0%, #090f1e 50%, #080d1a 100%);
-    isolation: isolate;
+.aurora-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 0%, #061325 0%, #030814 50%, #01040a 100%);
+  isolation: isolate;
+}
+
+/* Céu estrelado ártico */
+.aurora-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0.75;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #ffffff 99%, transparent),
+    radial-gradient(1.5px 1.5px at 25% 65%, #a7f3d0 99%, transparent),
+    radial-gradient(1px 1px at 38% 22%, #ffffff 99%, transparent),
+    radial-gradient(2px 2px at 48% 82%, #e9d5ff 99%, transparent),
+    radial-gradient(1px 1px at 58% 12%, #67e8f9 99%, transparent),
+    radial-gradient(1.5px 1.5px at 68% 45%, #ffffff 99%, transparent),
+    radial-gradient(2px 2px at 82% 28%, #a7f3d0 99%, transparent),
+    radial-gradient(1px 1px at 92% 72%, #ffffff 99%, transparent),
+    radial-gradient(1.5px 1.5px at 15% 88%, #c084fc 99%, transparent),
+    radial-gradient(1px 1px at 75% 85%, #6ee7b7 99%, transparent),
+    radial-gradient(1px 1px at 3% 40%, #ffffff 99%, transparent),
+    radial-gradient(2px 2px at 96% 15%, #e0e7ff 99%, transparent);
+  background-size: 400px 320px;
+  animation: aurora-twinkle 6s ease-in-out infinite alternate;
+}
+
+/* Véus e fitas em movimento ondulante contínuo */
+.aurora-streamer {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+/* Fita 1: Verde Menta / Esmeralda Intenso (Ondulação Superior) */
+.aurora-streamer--green-1 {
+  top: -15%;
+  left: -20%;
+  width: 140%;
+  height: 75%;
+  background: linear-gradient(
+    115deg,
+    transparent 10%,
+    rgba(16, 185, 129, 0.08) 25%,
+    rgba(5, 230, 140, 0.45) 45%,
+    rgba(52, 211, 153, 0.35) 58%,
+    rgba(20, 184, 166, 0.15) 70%,
+    transparent 85%
+  );
+  filter: blur(55px);
+  animation:
+    aurora-wave-green 20s ease-in-out infinite alternate,
+    aurora-shimmer 7s ease-in-out infinite alternate;
+}
+
+/* Fita 2: Violeta / Roxo Magnético (Cruzando com o verde) */
+.aurora-streamer--violet-1 {
+  top: -8%;
+  right: -25%;
+  width: 135%;
+  height: 80%;
+  background: linear-gradient(
+    135deg,
+    transparent 15%,
+    rgba(139, 92, 246, 0.12) 30%,
+    rgba(168, 85, 247, 0.42) 50%,
+    rgba(192, 132, 252, 0.38) 62%,
+    rgba(99, 102, 241, 0.15) 75%,
+    transparent 88%
+  );
+  filter: blur(60px);
+  animation:
+    aurora-wave-violet 24s ease-in-out infinite alternate,
+    aurora-pulse-glow 9s ease-in-out infinite alternate;
+}
+
+/* Fita 3: Onda Dupla Verde Neon / Ciano Ártico */
+.aurora-streamer--green-2 {
+  top: 5%;
+  left: -10%;
+  width: 120%;
+  height: 65%;
+  background: linear-gradient(
+    100deg,
+    transparent 18%,
+    rgba(52, 211, 153, 0.15) 35%,
+    rgba(16, 185, 129, 0.38) 48%,
+    rgba(6, 182, 212, 0.32) 65%,
+    transparent 82%
+  );
+  filter: blur(50px);
+  animation: aurora-wave-cyan 18s ease-in-out infinite alternate-reverse;
+}
+
+/* Fita 4: Cortina Roxo Profundo / Magenta */
+.aurora-streamer--purple-2 {
+  top: 15%;
+  left: 15%;
+  width: 110%;
+  height: 70%;
+  background: linear-gradient(
+    125deg,
+    transparent 20%,
+    rgba(147, 51, 234, 0.28) 45%,
+    rgba(217, 70, 239, 0.25) 58%,
+    rgba(124, 58, 237, 0.18) 72%,
+    transparent 85%
+  );
+  filter: blur(65px);
+  animation: aurora-wave-deep-purple 26s ease-in-out infinite alternate;
+}
+
+/* Glow central ambiental */
+.aurora-glow {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  width: 60%;
+  height: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(5, 230, 140, 0.18) 0%,
+    rgba(168, 85, 247, 0.15) 45%,
+    transparent 75%
+  );
+  filter: blur(75px);
+  animation: aurora-pulse-glow 11s ease-in-out infinite alternate;
+}
+
+/* ========================================================
+   ANIMAÇÕES ORGÂNICAS DA AURORA
+   ======================================================== */
+
+@keyframes aurora-wave-green {
+  0% {
+    transform: translate3d(-4%, -2%, 0) rotate(-6deg) scale(0.96, 1.02);
   }
-  
-  .aurora-background::before,
-  .aurora-background::after {
-    position: absolute;
-    inset: -25%;
-    content: '';
-    pointer-events: none;
-    will-change: transform;
+  35% {
+    transform: translate3d(3%, 4%, 0) rotate(-2deg) scale(1.06, 0.94);
   }
-  
-  .aurora-background::before {
-    background:
-      radial-gradient(
-        ellipse at 24% 35%,
-        rgba(45, 212, 191, 0.13) 0%,
-        transparent 32%
-      ),
-      radial-gradient(
-        ellipse at 72% 26%,
-        rgba(96, 165, 250, 0.13) 0%,
-        transparent 34%
-      ),
-      radial-gradient(
-        ellipse at 50% 70%,
-        rgba(139, 92, 246, 0.09) 0%,
-        transparent 38%
-      );
-    filter: blur(55px);
-    animation: aurora-drift 24s ease-in-out infinite alternate;
+  70% {
+    transform: translate3d(-2%, 7%, 0) rotate(-7deg) scale(0.98, 1.08);
   }
-  
-  .aurora-background::after {
-    background:
-      radial-gradient(
-        ellipse at 35% 45%,
-        rgba(45, 212, 191, 0.1) 0%,
-        transparent 25%
-      ),
-      radial-gradient(
-        ellipse at 65% 40%,
-        rgba(99, 102, 241, 0.1) 0%,
-        transparent 28%
-      );
-    filter: blur(75px);
-    animation: aurora-drift-reverse 32s ease-in-out infinite alternate;
+  100% {
+    transform: translate3d(5%, 2%, 0) rotate(-3deg) scale(1.05, 0.98);
   }
-  
-  .aurora-stars {
-    position: absolute;
-    inset: 0;
+}
+
+@keyframes aurora-wave-violet {
+  0% {
+    transform: translate3d(5%, 3%, 0) rotate(8deg) scale(1.02, 0.98);
+  }
+  40% {
+    transform: translate3d(-3%, -3%, 0) rotate(3deg) scale(0.95, 1.06);
+  }
+  75% {
+    transform: translate3d(4%, -6%, 0) rotate(9deg) scale(1.07, 0.95);
+  }
+  100% {
+    transform: translate3d(-4%, 2%, 0) rotate(4deg) scale(0.98, 1.04);
+  }
+}
+
+@keyframes aurora-wave-cyan {
+  0% {
+    transform: translate3d(-3%, 2%, 0) rotate(-3deg) scaleX(0.94);
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) rotate(4deg) scaleX(1.06);
+  }
+  100% {
+    transform: translate3d(-2%, 4%, 0) rotate(-1deg) scaleX(1);
+  }
+}
+
+@keyframes aurora-wave-deep-purple {
+  0% {
+    transform: translate3d(-5%, -4%, 0) rotate(4deg) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 5%, 0) rotate(-5deg) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-2%, 2%, 0) rotate(2deg) scale(0.95);
+  }
+}
+
+@keyframes aurora-pulse-glow {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.96) translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08) translate3d(-2%, 3%, 0);
+  }
+  100% {
     opacity: 0.65;
-    background-image:
-      radial-gradient(1px 1px at 8% 14%, #ffffff 98%, transparent),
-      radial-gradient(1.5px 1.5px at 18% 62%, #dbeafe 98%, transparent),
-      radial-gradient(1px 1px at 29% 28%, #ffffff 98%, transparent),
-      radial-gradient(1.5px 1.5px at 42% 77%, #a5f3fc 98%, transparent),
-      radial-gradient(1px 1px at 53% 16%, #ffffff 98%, transparent),
-      radial-gradient(1px 1px at 67% 52%, #e0e7ff 98%, transparent),
-      radial-gradient(1.5px 1.5px at 78% 23%, #ffffff 98%, transparent),
-      radial-gradient(1px 1px at 91% 68%, #a5f3fc 98%, transparent),
-      radial-gradient(1px 1px at 86% 89%, #ffffff 98%, transparent),
-      radial-gradient(1px 1px at 12% 85%, #c4b5fd 98%, transparent);
-    background-size: 340px 280px;
-    animation: stars-twinkle 7s ease-in-out infinite alternate;
+    transform: scale(1.02) translate3d(3%, -2%, 0);
   }
-  
-  .aurora-ribbon {
-    position: absolute;
-    top: -20%;
-    left: -15%;
-    width: 130%;
-    height: 65%;
-    border-radius: 50%;
-    opacity: 0.3;
-    filter: blur(55px);
-    transform: rotate(-12deg);
-    transform-origin: center;
+}
+
+@keyframes aurora-shimmer {
+  0% {
+    opacity: 0.6;
+    filter: blur(50px) hue-rotate(-10deg);
   }
-  
-  .aurora-ribbon--green {
-    background: linear-gradient(
-      110deg,
-      transparent 15%,
-      rgba(45, 212, 191, 0.04) 30%,
-      rgba(45, 212, 191, 0.34) 43%,
-      rgba(94, 234, 212, 0.08) 55%,
-      transparent 75%
-    );
-    animation: ribbon-flow 19s ease-in-out infinite alternate;
+  50% {
+    opacity: 0.95;
+    filter: blur(62px) hue-rotate(15deg);
   }
-  
-  .aurora-ribbon--blue {
-    top: -12%;
-    left: 5%;
-    opacity: 0.22;
-    background: linear-gradient(
-      100deg,
-      transparent 20%,
-      rgba(96, 165, 250, 0.05) 36%,
-      rgba(96, 165, 250, 0.3) 48%,
-      rgba(129, 140, 248, 0.08) 60%,
-      transparent 78%
-    );
-    animation: ribbon-flow-reverse 25s ease-in-out infinite alternate;
+  100% {
+    opacity: 0.7;
+    filter: blur(54px) hue-rotate(-5deg);
   }
-  
-  .aurora-ribbon--purple {
-    top: -5%;
-    left: -20%;
-    opacity: 0.18;
-    background: linear-gradient(
-      120deg,
-      transparent 20%,
-      rgba(167, 139, 250, 0.03) 35%,
-      rgba(167, 139, 250, 0.3) 49%,
-      transparent 72%
-    );
-    animation: ribbon-flow 29s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes aurora-twinkle {
+  0% {
+    opacity: 0.5;
   }
-  
-  @keyframes aurora-drift {
-    0% {
-      transform: translate3d(-3%, -2%, 0) scale(1);
-    }
-    50% {
-      transform: translate3d(3%, 2%, 0) scale(1.08);
-    }
-    100% {
-      transform: translate3d(-1%, 4%, 0) scale(1.03);
-    }
+  100% {
+    opacity: 0.9;
   }
-  
-  @keyframes aurora-drift-reverse {
-    0% {
-      transform: translate3d(3%, 2%, 0) scale(1.04);
-    }
-    100% {
-      transform: translate3d(-4%, -3%, 0) scale(1.1);
-    }
+}
+
+/* ========================================================
+   CLASSES UTILITÁRIAS DE VIDRO E BRILHO AURORA
+   ======================================================== */
+
+.aurora-glass-card {
+  background: rgba(6, 12, 26, 0.62) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(52, 211, 153, 0.18) !important;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.4),
+    0 0 35px rgba(16, 185, 129, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.aurora-glass-card:hover {
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.48),
+    0 0 45px rgba(168, 85, 247, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+  transform: translateY(-2px);
+}
+
+.aurora-gradient-text {
+  background: linear-gradient(
+    120deg,
+    #34d399 0%,
+    #22d3ee 30%,
+    #c084fc 70%,
+    #a855f7 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(52, 211, 153, 0.3));
+}
+
+.aurora-btn {
+  background: linear-gradient(
+    115deg,
+    #10b981 0%,
+    #06b6d4 45%,
+    #8b5cf6 100%
+  ) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow:
+    0 4px 18px rgba(16, 185, 129, 0.28),
+    0 0 25px rgba(139, 92, 246, 0.2) !important;
+  transition: all 0.25s ease !important;
+}
+
+.aurora-btn:hover:not(:disabled) {
+  background: linear-gradient(
+    115deg,
+    #34d399 0%,
+    #22d3ee 45%,
+    #a855f7 100%
+  ) !important;
+  box-shadow:
+    0 6px 26px rgba(16, 185, 129, 0.42),
+    0 0 35px rgba(168, 85, 247, 0.38) !important;
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.aurora-input {
+  background: rgba(3, 7, 18, 0.65) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  color: #f1f5f9 !important;
+  transition: all 0.2s ease !important;
+}
+
+.aurora-input:focus {
+  border-color: #34d399 !important;
+  box-shadow:
+    0 0 0 3px rgba(52, 211, 153, 0.18),
+    0 0 20px rgba(168, 85, 247, 0.15) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-streamer,
+  .aurora-glow,
+  .aurora-stars {
+    animation: none !important;
   }
-  
-  @keyframes ribbon-flow {
-    0% {
-      transform: translate3d(-2%, 0, 0) rotate(-12deg) scaleX(0.95);
-    }
-    100% {
-      transform: translate3d(3%, 6%, 0) rotate(-5deg) scaleX(1.08);
-    }
-  }
-  
-  @keyframes ribbon-flow-reverse {
-    0% {
-      transform: translate3d(3%, 3%, 0) rotate(-8deg) scaleX(1.04);
-    }
-    100% {
-      transform: translate3d(-3%, -2%, 0) rotate(-15deg) scaleX(0.96);
-    }
-  }
-  
-  @keyframes stars-twinkle {
-    0% {
-      opacity: 0.35;
-    }
-    100% {
-      opacity: 0.8;
-    }
-  }
-  
-  @media (max-width: 640px) {
-    .aurora-ribbon {
-      filter: blur(38px);
-      opacity: 0.2;
-    }
-  
-    .aurora-background::before,
-    .aurora-background::after {
-      filter: blur(45px);
-    }
-  }
-  
-  @media (prefers-reduced-motion: reduce) {
-    .aurora-background::before,
-    .aurora-background::after,
-    .aurora-stars,
-    .aurora-ribbon {
-      animation: none !important;
-    }
-  }
-  
+}
+

@@ -60,22 +60,26 @@ export function Dashboard() {
     {
       titulo: 'Produtos ativos',
       valor: String(produtos.length),
-      descricao: 'Produtos retornados pelo catálogo'
+      descricao: 'Produtos retornados pelo catálogo',
+      destaque: 'emerald'
     },
     {
       titulo: 'Vendas concluídas',
       valor: String(vendasConcluidas.length),
-      descricao: 'Vendas presentes na consulta atual'
+      descricao: 'Vendas presentes na consulta atual',
+      destaque: 'teal'
     },
     {
       titulo: 'Estoque zerado',
       valor: String(estoqueZerado),
-      descricao: 'Produtos sem unidades disponíveis'
+      descricao: 'Produtos sem unidades disponíveis',
+      destaque: 'rose'
     },
     {
-      titulo: 'Faturamento das vendas listadas',
+      titulo: 'Faturamento listado',
       valor: formatarMoeda(faturamento),
-      descricao: 'Exclui vendas canceladas'
+      descricao: 'Exclui vendas canceladas',
+      destaque: 'purple'
     }
   ];
 
@@ -83,47 +87,56 @@ export function Dashboard() {
     <div className="space-y-8">
       <section className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold">Painel de controle</h2>
-          <p className="mt-2 text-slate-400">
-            Acompanhe os produtos e as vendas da MS² Vestuário.
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            PAINEL GERAL
+          </div>
+          <h2 className="aurora-gradient-text text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Painel de controle
+          </h2>
+          <p className="mt-1 text-sm text-slate-300 sm:text-base">
+            Acompanhe os produtos e as vendas da Aurora.
           </p>
         </div>
 
         <Link
           to="/vendas"
-          className="rounded-lg bg-cyan-600 px-5 py-3 font-bold text-white transition hover:bg-cyan-500"
+          className="aurora-btn inline-flex items-center gap-2 rounded-xl px-5 py-3 font-bold tracking-wide"
         >
-          Iniciar venda
+          <span>✦ Iniciar venda</span>
         </Link>
       </section>
 
       {erro && (
         <div
           role="alert"
-          className="rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-red-300"
+          className="rounded-xl border border-rose-500/40 bg-rose-500/15 p-4 text-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.15)]"
         >
           {erro}
         </div>
       )}
 
       {carregando ? (
-        <p className="text-slate-400">Carregando informações...</p>
+        <div className="aurora-glass-card rounded-2xl p-8 text-center text-slate-300">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-2 border-emerald-400 border-t-transparent" />
+          <p className="mt-3 text-sm">Carregando informações da Aurora...</p>
+        </div>
       ) : (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {cards.map((card) => (
             <article
               key={card.titulo}
-              className="rounded-xl border border-slate-800 bg-slate-900 p-6"
+              className="aurora-glass-card rounded-2xl p-6"
             >
-              <h3 className="text-sm font-semibold text-slate-400">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 {card.titulo}
               </h3>
 
-              <p className="mt-3 break-words text-3xl font-extrabold text-cyan-400">
+              <p className="aurora-gradient-text mt-3 break-words text-3xl font-black sm:text-4xl">
                 {card.valor}
               </p>
 
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-xs text-slate-400">
                 {card.descricao}
               </p>
             </article>
@@ -131,23 +144,33 @@ export function Dashboard() {
         </section>
       )}
 
-      <section className="grid gap-4 md:grid-cols-2">
+      <section className="grid gap-5 md:grid-cols-2">
         <Link
           to="/produtos"
-          className="rounded-xl border border-slate-800 bg-slate-900 p-6 transition hover:border-cyan-500"
+          className="aurora-glass-card group rounded-2xl p-6 transition-all"
         >
-          <h3 className="text-xl font-bold">Catálogo de produtos</h3>
-          <p className="mt-2 text-slate-400">
+          <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/15 text-emerald-300 transition-transform group-hover:scale-110">
+            📦
+          </div>
+          <h3 className="text-xl font-bold text-slate-100 group-hover:text-emerald-300 transition-colors">
+            Catálogo de produtos
+          </h3>
+          <p className="mt-2 text-sm text-slate-300">
             Consultar o estoque e cadastrar novas peças.
           </p>
         </Link>
 
         <Link
           to="/vendas"
-          className="rounded-xl border border-slate-800 bg-slate-900 p-6 transition hover:border-cyan-500"
+          className="aurora-glass-card group rounded-2xl p-6 transition-all"
         >
-          <h3 className="text-xl font-bold">Área de vendas</h3>
-          <p className="mt-2 text-slate-400">
+          <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/15 text-purple-300 transition-transform group-hover:scale-110">
+            ⚡
+          </div>
+          <h3 className="text-xl font-bold text-slate-100 group-hover:text-purple-300 transition-colors">
+            Área de vendas
+          </h3>
+          <p className="mt-2 text-sm text-slate-300">
             Selecionar produtos, montar o carrinho e concluir uma venda.
           </p>
         </Link>
@@ -155,3 +178,4 @@ export function Dashboard() {
     </div>
   );
 }
+

@@ -55,25 +55,25 @@ export function LoginForm() {
   return (
     <form
       onSubmit={lidarComSubmit}
-      className="w-full rounded-xl border border-slate-700 bg-slate-800 p-8 shadow-2xl"
+      className="aurora-glass-card w-full rounded-2xl p-7 sm:p-9 shadow-2xl"
     >
-      <h2 className="mb-6 text-center text-2xl font-bold text-white">
+      <h3 className="mb-6 text-center text-xl font-bold tracking-tight text-slate-100 sm:text-2xl">
         Acesso ao sistema
-      </h2>
+      </h3>
 
       {erro && (
         <div
           role="alert"
-          className="mb-4 rounded border border-red-500 bg-red-500/10 p-3 text-sm text-red-400"
+          className="mb-5 rounded-xl border border-rose-500/40 bg-rose-500/15 p-3.5 text-sm font-medium text-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.15)]"
         >
           {erro}
         </div>
       )}
 
-      <div className="mb-4">
+      <div className="mb-5">
         <label
           htmlFor="email"
-          className="mb-2 block text-sm font-bold text-slate-300"
+          className="mb-2 block text-xs font-bold uppercase tracking-wider text-emerald-300/90"
         >
           E-mail
         </label>
@@ -84,17 +84,17 @@ export function LoginForm() {
           autoComplete="username"
           value={email}
           onChange={(evento) => setEmail(evento.target.value)}
-          className="w-full rounded border border-slate-600 bg-slate-900 p-3 text-white outline-none focus:border-cyan-500"
+          className="aurora-input w-full rounded-xl p-3.5 text-slate-100 outline-none placeholder:text-slate-500"
           placeholder="gerente@ms2.com"
           required
           disabled={carregando}
         />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-7">
         <label
           htmlFor="senha"
-          className="mb-2 block text-sm font-bold text-slate-300"
+          className="mb-2 block text-xs font-bold uppercase tracking-wider text-purple-300/90"
         >
           Senha
         </label>
@@ -105,7 +105,7 @@ export function LoginForm() {
           autoComplete="current-password"
           value={senha}
           onChange={(evento) => setSenha(evento.target.value)}
-          className="w-full rounded border border-slate-600 bg-slate-900 p-3 text-white outline-none focus:border-cyan-500"
+          className="aurora-input w-full rounded-xl p-3.5 text-slate-100 outline-none placeholder:text-slate-500"
           placeholder="Digite sua senha"
           required
           disabled={carregando}
@@ -115,10 +115,11 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={carregando}
-        className="w-full rounded bg-cyan-600 px-4 py-3 font-bold text-white transition hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-50"
+        className="aurora-btn w-full rounded-xl py-3.5 font-bold tracking-wide transition-all disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {carregando ? 'Entrando...' : 'Entrar'}
+        {carregando ? 'Entrando no sistema...' : 'Entrar no Aurora'}
       </button>
     </form>
   );
 }
+

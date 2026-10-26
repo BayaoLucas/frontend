@@ -70,12 +70,12 @@ export function Produtos() {
       await requisicao<Produto>('/produtos', {
         method: 'POST',
         body: JSON.stringify({
-          codigo: formulario.codigo.trim().toUpperCase(),
+          codigo: formulario.codigo.trim(),
           nome: formulario.nome.trim(),
           descricao: formulario.descricao.trim() || null,
           tamanho: formulario.tamanho.trim() || null,
           cor: formulario.cor.trim() || null,
-          preco: Number(formulario.preco),
+          preco: formulario.preco.replace(',', '.'),
           estoque: Number(formulario.estoque)
         })
       });
@@ -97,31 +97,40 @@ export function Produtos() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="text-3xl font-bold">Produtos</h2>
-        <p className="mt-2 text-slate-400">
-          Consulte o catálogo e acompanhe os preços e o estoque.
+        <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          ESTOQUE & CATÁLOGO
+        </div>
+        <h2 className="aurora-gradient-text text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Produtos
+        </h2>
+        <p className="mt-1 text-sm text-slate-300 sm:text-base">
+          Consulte o catálogo da Aurora e acompanhe os preços e o estoque.
         </p>
       </section>
 
       {erro && (
-        <div role="alert" className="rounded-lg bg-red-500/10 p-4 text-red-300">
+        <div role="alert" className="rounded-xl border border-rose-500/40 bg-rose-500/15 p-4 text-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.15)]">
           {erro}
         </div>
       )}
 
       {mensagem && (
-        <div role="status" className="rounded-lg bg-emerald-500/10 p-4 text-emerald-300">
+        <div role="status" className="rounded-xl border border-emerald-500/40 bg-emerald-500/15 p-4 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
           {mensagem}
         </div>
       )}
 
       {gerente && (
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-          <h3 className="mb-5 text-xl font-bold">Cadastrar produto</h3>
+        <section className="aurora-glass-card rounded-2xl p-6 sm:p-7">
+          <h3 className="mb-5 text-xl font-bold text-slate-100 flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            Cadastrar novo produto
+          </h3>
 
           <form onSubmit={cadastrarProduto} className="grid gap-4 md:grid-cols-2">
             <div>
-              <label htmlFor="codigo" className="mb-1 block text-sm text-slate-300">
+              <label htmlFor="codigo" className="mb-1 block text-xs font-bold uppercase tracking-wider text-emerald-300/90">
                 Código
               </label>
               <input
@@ -130,12 +139,13 @@ export function Produtos() {
                 onChange={(e) => setFormulario({ ...formulario, codigo: e.target.value })}
                 maxLength={50}
                 required
-                className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="Ex: CAM-001"
               />
             </div>
 
             <div>
-              <label htmlFor="nome" className="mb-1 block text-sm text-slate-300">
+              <label htmlFor="nome" className="mb-1 block text-xs font-bold uppercase tracking-wider text-emerald-300/90">
                 Nome da peça
               </label>
               <input
@@ -144,24 +154,26 @@ export function Produtos() {
                 onChange={(e) => setFormulario({ ...formulario, nome: e.target.value })}
                 maxLength={120}
                 required
-                className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="Ex: Camiseta Aurora Nórdica"
               />
             </div>
 
             <div>
-              <label htmlFor="descricao" className="mb-1 block text-sm text-slate-300">
+              <label htmlFor="descricao" className="mb-1 block text-xs font-bold uppercase tracking-wider text-purple-300/90">
                 Descrição
               </label>
               <input
                 id="descricao"
                 value={formulario.descricao}
                 onChange={(e) => setFormulario({ ...formulario, descricao: e.target.value })}
-                className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="Ex: Algodão orgânico 100%"
               />
             </div>
 
             <div>
-              <label htmlFor="tamanho" className="mb-1 block text-sm text-slate-300">
+              <label htmlFor="tamanho" className="mb-1 block text-xs font-bold uppercase tracking-wider text-purple-300/90">
                 Tamanho
               </label>
               <input
@@ -169,12 +181,13 @@ export function Produtos() {
                 value={formulario.tamanho}
                 onChange={(e) => setFormulario({ ...formulario, tamanho: e.target.value })}
                 maxLength={20}
-                className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="Ex: P, M, G, GG"
               />
             </div>
 
             <div>
-              <label htmlFor="cor" className="mb-1 block text-sm text-slate-300">
+              <label htmlFor="cor" className="mb-1 block text-xs font-bold uppercase tracking-wider text-teal-300/90">
                 Cor
               </label>
               <input
@@ -182,12 +195,13 @@ export function Produtos() {
                 value={formulario.cor}
                 onChange={(e) => setFormulario({ ...formulario, cor: e.target.value })}
                 maxLength={40}
-                className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="Ex: Verde Aurora, Roxo Boreal"
               />
             </div>
 
             <div>
-              <label htmlFor="preco" className="mb-1 block text-sm text-slate-300">
+              <label htmlFor="preco" className="mb-1 block text-xs font-bold uppercase tracking-wider text-teal-300/90">
                 Preço (R$)
               </label>
               <input
@@ -198,12 +212,13 @@ export function Produtos() {
                 value={formulario.preco}
                 onChange={(e) => setFormulario({ ...formulario, preco: e.target.value })}
                 required
-                className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="0.00"
               />
             </div>
 
             <div>
-              <label htmlFor="estoque" className="mb-1 block text-sm text-slate-300">
+              <label htmlFor="estoque" className="mb-1 block text-xs font-bold uppercase tracking-wider text-teal-300/90">
                 Quantidade em estoque
               </label>
               <input
@@ -214,7 +229,8 @@ export function Produtos() {
                 value={formulario.estoque}
                 onChange={(e) => setFormulario({ ...formulario, estoque: e.target.value })}
                 required
-                className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="0"
               />
             </div>
 
@@ -222,35 +238,38 @@ export function Produtos() {
               <button
                 type="submit"
                 disabled={salvando}
-                className="w-full rounded bg-cyan-600 p-3 font-bold hover:bg-cyan-500 disabled:opacity-50"
+                className="aurora-btn w-full rounded-xl p-3 font-bold disabled:opacity-50"
               >
-                {salvando ? 'Salvando...' : 'Cadastrar produto'}
+                {salvando ? 'Salvando...' : '✦ Cadastrar produto'}
               </button>
             </div>
           </form>
         </section>
       )}
 
-      <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+      <section className="aurora-glass-card rounded-2xl p-6 sm:p-7">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-xl font-bold">Catálogo</h3>
+          <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-purple-400" />
+            Catálogo disponível
+          </h3>
 
           <input
             value={pesquisa}
             onChange={(e) => setPesquisa(e.target.value)}
-            placeholder="Pesquisar por nome ou código"
-            className="w-full rounded border border-slate-700 bg-slate-950 p-3 sm:max-w-sm"
+            placeholder="Pesquisar por nome ou código..."
+            className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none sm:max-w-sm"
           />
         </div>
 
         {carregando ? (
           <p className="text-slate-400">Carregando produtos...</p>
         ) : produtos.length === 0 ? (
-          <p className="text-slate-400">Nenhum produto encontrado.</p>
+          <p className="text-slate-400">Nenhum produto encontrado no catálogo.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[650px] text-left text-sm">
-              <thead className="border-b border-slate-700 text-slate-400">
+              <thead className="border-b border-emerald-500/20 text-emerald-300/80">
                 <tr>
                   <th className="p-3">Código</th>
                   <th className="p-3">Produto</th>
@@ -263,15 +282,19 @@ export function Produtos() {
 
               <tbody>
                 {produtos.map((produto) => (
-                  <tr key={produto.id} className="border-b border-slate-800">
-                    <td className="p-3">{produto.codigo}</td>
-                    <td className="p-3 font-medium">{produto.nome}</td>
-                    <td className="p-3">{produto.tamanho || '-'}</td>
-                    <td className="p-3">{produto.cor || '-'}</td>
-                    <td className="p-3">{formatarMoeda(produto.preco)}</td>
+                  <tr key={produto.id} className="border-b border-slate-800/60 transition-colors hover:bg-emerald-500/5">
+                    <td className="p-3 font-mono text-xs text-emerald-300">{produto.codigo}</td>
+                    <td className="p-3 font-medium text-slate-100">{produto.nome}</td>
+                    <td className="p-3 text-slate-400">{produto.tamanho || '-'}</td>
+                    <td className="p-3 text-slate-400">{produto.cor || '-'}</td>
+                    <td className="p-3 font-semibold text-slate-200">{formatarMoeda(produto.preco)}</td>
                     <td className="p-3">
-                      <span className={produto.estoque === 0 ? 'text-red-400' : 'text-emerald-400'}>
-                        {produto.estoque}
+                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        produto.estoque === 0
+                          ? 'border border-rose-500/30 bg-rose-500/15 text-rose-300'
+                          : 'border border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
+                      }`}>
+                        {produto.estoque} un
                       </span>
                     </td>
                   </tr>
@@ -284,3 +307,4 @@ export function Produtos() {
     </div>
   );
 }
+

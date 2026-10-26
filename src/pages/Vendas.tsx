@@ -313,7 +313,11 @@ export function Vendas() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="text-3xl font-bold">Nova venda</h2>
+        <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          TERMINAL DE VENDAS
+        </div>
+        <h2 className="aurora-gradient-text text-3xl font-extrabold tracking-tight sm:text-4xl">Nova venda</h2>
         <p className="mt-2 text-slate-400">
           Selecione os produtos, confira os valores e finalize a compra.
         </p>
@@ -337,7 +341,7 @@ export function Vendas() {
         </div>
       )}
 
-      <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+      <section className="aurora-glass-card rounded-2xl p-6 sm:p-7">
         <h3 className="mb-4 text-xl font-bold">Adicionar produtos</h3>
 
         {produtos.length === 0 ? (
@@ -349,7 +353,7 @@ export function Vendas() {
             <select
               value={produtoSelecionado}
               onChange={(e) => setProdutoSelecionado(e.target.value)}
-              className="min-w-0 flex-1 rounded border border-slate-700 bg-slate-950 p-3"
+              className="min-w-0 flex-1 aurora-input rounded-xl p-3 text-slate-100 outline-none"
             >
               <option value="">Selecione uma peça</option>
 
@@ -370,7 +374,7 @@ export function Vendas() {
               type="button"
               onClick={adicionarProduto}
               disabled={!produtoSelecionado}
-              className="rounded bg-cyan-600 px-5 py-3 font-bold hover:bg-cyan-500 disabled:opacity-50"
+              className="aurora-btn rounded-xl px-5 py-3 font-bold disabled:opacity-50"
             >
               Adicionar ao carrinho
             </button>
@@ -378,7 +382,7 @@ export function Vendas() {
         )}
       </section>
 
-      <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+      <section className="aurora-glass-card rounded-2xl p-6 sm:p-7">
         <h3 className="mb-4 text-xl font-bold">Carrinho</h3>
 
         {carrinho.length === 0 ? (
@@ -411,7 +415,7 @@ export function Vendas() {
                         item.quantidade - 1
                       )
                     }
-                    className="rounded bg-slate-800 px-3 py-2 hover:bg-slate-700"
+                    className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-1.5 text-slate-200 hover:border-emerald-500/40 hover:text-emerald-300"
                     aria-label={`Diminuir quantidade de ${item.produto.nome}`}
                   >
                     −
@@ -429,7 +433,7 @@ export function Vendas() {
                         item.quantidade + 1
                       )
                     }
-                    className="rounded bg-slate-800 px-3 py-2 hover:bg-slate-700"
+                    className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-1.5 text-slate-200 hover:border-emerald-500/40 hover:text-emerald-300"
                     aria-label={`Aumentar quantidade de ${item.produto.nome}`}
                   >
                     +
@@ -456,7 +460,7 @@ export function Vendas() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-5 rounded-xl border border-slate-800 bg-slate-900 p-6">
+        <div className="space-y-5 aurora-glass-card rounded-2xl p-6 sm:p-7">
           <h3 className="text-xl font-bold">Dados da venda</h3>
 
           <div>
@@ -474,7 +478,7 @@ export function Vendas() {
                 setClienteSelecionado(e.target.value);
                 invalidarSimulacao();
               }}
-              className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+              className="w-full aurora-input rounded-xl p-3 text-slate-100 outline-none"
             >
               <option value="">Venda sem identificação de cliente</option>
 
@@ -501,7 +505,7 @@ export function Vendas() {
                 setFormaPagamento(e.target.value);
                 invalidarSimulacao();
               }}
-              className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+              className="w-full aurora-input rounded-xl p-3 text-slate-100 outline-none"
             >
               <option value="DINHEIRO">Dinheiro</option>
               <option value="PIX">PIX</option>
@@ -531,7 +535,7 @@ export function Vendas() {
                 setSimulacao(null);
                 setMensagem('');
               }}
-              className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+              className="w-full aurora-input rounded-xl p-3 text-slate-100 outline-none"
             />
 
             {precisaAutorizacao && (
@@ -563,7 +567,7 @@ export function Vendas() {
                     setEmailGerente(e.target.value);
                     invalidarSimulacao();
                   }}
-                  className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                  className="w-full aurora-input rounded-xl p-3 text-slate-100 outline-none"
                   required
                 />
               </div>
@@ -585,7 +589,7 @@ export function Vendas() {
                     setSenhaGerente(e.target.value);
                     invalidarSimulacao();
                   }}
-                  className="w-full rounded border border-slate-700 bg-slate-950 p-3"
+                  className="w-full aurora-input rounded-xl p-3 text-slate-100 outline-none"
                   required
                 />
               </div>
@@ -608,7 +612,7 @@ export function Vendas() {
           )}
         </div>
 
-        <div className="h-fit rounded-xl border border-slate-800 bg-slate-900 p-6">
+        <div className="h-fit aurora-glass-card rounded-2xl p-6 sm:p-7">
           <h3 className="mb-5 text-xl font-bold">Resumo da venda</h3>
 
           <div className="space-y-3 text-slate-300">
@@ -634,7 +638,7 @@ export function Vendas() {
               </span>
             </div>
 
-            <div className="flex justify-between gap-4 border-t border-slate-700 pt-4 text-xl font-extrabold text-cyan-400">
+            <div className="flex justify-between gap-4 border-t border-slate-700 pt-4 text-xl font-extrabold aurora-gradient-text">
               <span>Total estimado</span>
               <span>{formatarMoeda(totalLocal)}</span>
             </div>
@@ -671,7 +675,7 @@ export function Vendas() {
               type="button"
               onClick={simularVenda}
               disabled={processando || carrinho.length === 0}
-              className="w-full rounded border border-cyan-500 px-4 py-3 font-bold text-cyan-300 hover:bg-cyan-500/10 disabled:opacity-50"
+              className="w-full rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 font-bold text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50 transition-all"
             >
               {processando ? 'Processando...' : 'Simular venda'}
             </button>
@@ -680,7 +684,7 @@ export function Vendas() {
               type="button"
               onClick={finalizarVenda}
               disabled={processando || carrinho.length === 0}
-              className="w-full rounded bg-emerald-600 px-4 py-3 font-bold text-white hover:bg-emerald-500 disabled:opacity-50"
+              className="aurora-btn w-full rounded-xl px-4 py-3.5 font-bold disabled:opacity-50"
             >
               {processando ? 'Processando...' : 'Finalizar venda'}
             </button>

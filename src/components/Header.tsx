@@ -11,7 +11,6 @@ export function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // A mudança de rota atualiza o componente e a sessão exibida.
   const [saindo, setSaindo] = useState(false);
 
   const usuario = obterUsuarioSalvo();
@@ -27,7 +26,7 @@ export function Header() {
         });
       }
     } catch {
-      // A sessão local também precisa ser encerrada se o servidor falhar.
+      // A sessao local tambem precisa ser encerrada se o servidor falhar.
     } finally {
       limparSessao();
       setSaindo(false);
@@ -36,11 +35,11 @@ export function Header() {
   }
 
   return (
-    <header className="border-b border-slate-800 bg-slate-900">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <Link to={usuario ? '/dashboard' : '/'} className="block">
-          <h1 className="text-xl font-extrabold text-cyan-400 sm:text-2xl">
-            MS² Vestuário
+    <header className="relative z-20 border-b border-emerald-500/20 bg-slate-950/45 backdrop-blur-xl shadow-lg shadow-black/30">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+        <Link to={usuario ? '/dashboard' : '/'} className="group block">
+          <h1 className="aurora-gradient-text text-2xl font-black tracking-tight transition-transform duration-300 group-hover:scale-105 sm:text-3xl">
+            Aurora
           </h1>
           <p className="text-xs text-slate-400">
             Sistema de gerenciamento de vendas
@@ -48,29 +47,41 @@ export function Header() {
         </Link>
 
         {usuario && !estaNoLogin && (
-          <nav className="flex flex-wrap items-center gap-3 text-sm">
+          <nav className="flex flex-wrap items-center gap-2 text-sm sm:gap-3">
             <Link
               to="/dashboard"
-              className="text-slate-300 transition hover:text-cyan-400"
+              className={`rounded-lg px-3 py-1.5 font-medium transition-all ${
+                location.pathname === '/dashboard'
+                  ? 'border border-emerald-500/35 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.25)]'
+                  : 'text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300'
+              }`}
             >
               Painel
             </Link>
 
             <Link
               to="/produtos"
-              className="text-slate-300 transition hover:text-cyan-400"
+              className={`rounded-lg px-3 py-1.5 font-medium transition-all ${
+                location.pathname === '/produtos'
+                  ? 'border border-emerald-500/35 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.25)]'
+                  : 'text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300'
+              }`}
             >
               Produtos
             </Link>
 
             <Link
               to="/vendas"
-              className="text-slate-300 transition hover:text-cyan-400"
+              className={`rounded-lg px-3 py-1.5 font-medium transition-all ${
+                location.pathname === '/vendas'
+                  ? 'border border-emerald-500/35 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.25)]'
+                  : 'text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300'
+              }`}
             >
               Vendas
             </Link>
 
-            <span className="text-slate-400">
+            <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-3 py-1 text-xs font-semibold text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
               {usuario.nome} ({usuario.perfil})
             </span>
 
@@ -78,7 +89,7 @@ export function Header() {
               type="button"
               onClick={sair}
               disabled={saindo}
-              className="rounded bg-red-600 px-3 py-2 font-semibold text-white hover:bg-red-500 disabled:opacity-50"
+              className="rounded-lg border border-rose-500/30 bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-200 transition-all hover:border-rose-500/50 hover:bg-rose-500/25 disabled:opacity-50"
             >
               {saindo ? 'Saindo...' : 'Sair'}
             </button>
@@ -88,3 +99,4 @@ export function Header() {
     </header>
   );
 }
+
