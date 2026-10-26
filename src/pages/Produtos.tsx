@@ -8,7 +8,6 @@ import {
 } from '../services/api';
 
 const formularioInicial = {
-  codigo: '',
   nome: '',
   descricao: '',
   tamanho: '',
@@ -20,6 +19,7 @@ const formularioInicial = {
 export function Produtos() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [formulario, setFormulario] = useState(formularioInicial);
+  const [proximoCodigo, setProximoCodigo] = useState('');
   const [pesquisa, setPesquisa] = useState('');
   const [erro, setErro] = useState('');
   const [mensagem, setMensagem] = useState('');
@@ -28,6 +28,16 @@ export function Produtos() {
 
   const usuario = obterUsuarioSalvo();
   const gerente = usuario?.perfil === 'GERENTE';
+
+  const carregarProximoCodigo = useCallback(async () => {
+    if (!gerente) return;
+    try {
+      const resp = await requisicao<{ proximoCodigo: string }>('/produtos/proximo-codigo');
+      setProximoCodigo(resp.proximoCodigo);
+    } catch {
+      // Ignora erro de previsão silenciosamente
+    }
+  }, [gerente]);
 
   const carregarProdutos = useCallback(async () => {
     setCarregando(true);
@@ -60,6 +70,10 @@ export function Produtos() {
     return () => window.clearTimeout(temporizador);
   }, [carregarProdutos]);
 
+  useEffect(() => {
+    void carregarProximoCodigo();
+  }, [carregarProximoCodigo]);
+
   async function cadastrarProduto(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     setErro('');
@@ -67,10 +81,9 @@ export function Produtos() {
     setSalvando(true);
 
     try {
-      await requisicao<Produto>('/produtos', {
+      const novoProduto = await requisicao<Produto>('/produtos', {
         method: 'POST',
         body: JSON.stringify({
-          codigo: formulario.codigo.trim(),
           nome: formulario.nome.trim(),
           descricao: formulario.descricao.trim() || null,
           tamanho: formulario.tamanho.trim() || null,
@@ -81,8 +94,9 @@ export function Produtos() {
       });
 
       setFormulario(formularioInicial);
-      setMensagem('Produto cadastrado com sucesso.');
+      setMensagem(`Produto "${novoProduto.nome}" cadastrado com sucesso com o código ${novoProduto.codigo}.`);
       await carregarProdutos();
+      await carregarProximoCodigo();
     } catch (erroCadastro) {
       setErro(
         erroCadastro instanceof Error
@@ -130,17 +144,18 @@ export function Produtos() {
 
           <form onSubmit={cadastrarProduto} className="grid gap-4 md:grid-cols-2">
             <div>
-              <label htmlFor="codigo" className="mb-1 block text-xs font-bold uppercase tracking-wider text-emerald-300/90">
-                Código
+              <label htmlFor="codigo" className="mb-1 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-emerald-300/90">
+                <span>Código</span>
+                <span className="text-[10px] lowercase text-emerald-400 font-normal">
+                  (gerado automaticamente)
+                </span>
               </label>
               <input
                 id="codigo"
-                value={formulario.codigo}
-                onChange={(e) => setFormulario({ ...formulario, codigo: e.target.value })}
-                maxLength={50}
-                required
-                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
-                placeholder="Ex: CAM-001"
+                value={proximoCodigo ? `Código: ${proximoCodigo}` : 'Gerado automaticamente'}
+                disabled
+                readOnly
+                className="aurora-input w-full rounded-xl p-3 font-mono font-bold text-emerald-300 outline-none cursor-not-allowed opacity-80"
               />
             </div>
 
@@ -283,7 +298,7 @@ export function Produtos() {
               <tbody>
                 {produtos.map((produto) => (
                   <tr key={produto.id} className="border-b border-slate-800/60 transition-colors hover:bg-emerald-500/5">
-                    <td className="p-3 font-mono text-xs text-emerald-300">{produto.codigo}</td>
+                    <td className="p-3 font-mono text-xs font-bold text-emerald-300">#{produto.codigo}</td>
                     <td className="p-3 font-medium text-slate-100">{produto.nome}</td>
                     <td className="p-3 text-slate-400">{produto.tamanho || '-'}</td>
                     <td className="p-3 text-slate-400">{produto.cor || '-'}</td>
@@ -307,4 +322,3 @@ export function Produtos() {
     </div>
   );
 }
-
