@@ -34,7 +34,9 @@ const formularioInicial = {
   cor: '',
   genero: 'UNISSEX',
   preco: '',
-  estoque: '0'
+  estoque: '0',
+  imagem_url: '',
+  visivel_catalogo: true
 };
 
 export function Produtos() {
@@ -115,11 +117,45 @@ export function Produtos() {
       cor: produto.cor || '',
       genero: produto.genero || 'UNISSEX',
       preco: produto.preco,
-      estoque: String(produto.estoque)
+      estoque: String(produto.estoque),
+      imagem_url: produto.imagem_url || '',
+      visivel_catalogo: Number(produto.visivel_catalogo ?? 1) === 1
     });
     setMensagem('');
     setErro('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function inativarProduto(produto: Produto) {
+    if (!confirm(`Deseja realmente desativar o produto "${produto.nome}"?`)) return;
+    try {
+      await requisicao(`/produtos/${produto.id}/inativar`, { method: 'PATCH' });
+      setMensagem(`Produto "${produto.nome}" desativado com sucesso.`);
+      await carregarProdutos();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Erro ao desativar produto.');
+    }
+  }
+
+  async function reativarProduto(produto: Produto) {
+    try {
+      await requisicao(`/produtos/${produto.id}/reativar`, { method: 'PATCH' });
+      setMensagem(`Produto "${produto.nome}" reativado com sucesso.`);
+      await carregarProdutos();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Erro ao reativar produto.');
+    }
+  }
+
+  async function excluirProduto(produto: Produto) {
+    if (!confirm(`ATENÇÃO: Deseja EXCLUIR PERMANENTEMENTE o produto "${produto.nome}"?\nEsta ação não poderá ser desfeita!`)) return;
+    try {
+      await requisicao(`/produtos/${produto.id}`, { method: 'DELETE' });
+      setMensagem(`Produto "${produto.nome}" excluído com sucesso.`);
+      await carregarProdutos();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Erro ao excluir produto.');
+    }
   }
 
   function cancelarEdicao() {
@@ -152,7 +188,9 @@ export function Produtos() {
             cor: formulario.cor.trim() || null,
             genero: formulario.genero,
             preco: formulario.preco.replace(',', '.'),
-            estoque: Number(formulario.estoque)
+            estoque: Number(formulario.estoque),
+            imagem_url: formulario.imagem_url.trim() || null,
+            visivel_catalogo: formulario.visivel_catalogo ? 1 : 0
           })
         });
 
@@ -420,6 +458,31 @@ export function Produtos() {
               />
             </div>
 
+            <div>
+              <label htmlFor="imagem_url" className="mb-1 block text-xs font-bold uppercase tracking-wider text-cyan-300/90">
+                URL da imagem ilustrativa (opcional)
+              </label>
+              <input
+                id="imagem_url"
+                value={formulario.imagem_url}
+                onChange={(e) => setFormulario({ ...formulario, imagem_url: e.target.value })}
+                className="aurora-input w-full rounded-xl p-3 text-slate-100 outline-none"
+                placeholder="https://exemplo.com/foto-roupa.jpg"
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-200">
+                <input
+                  type="checkbox"
+                  checked={formulario.visivel_catalogo}
+                  onChange={(e) => setFormulario({ ...formulario, visivel_catalogo: e.target.checked })}
+                  className="rounded border-slate-700 h-4 w-4"
+                />
+                Exibir produto na vitrine do Catálogo
+              </label>
+            </div>
+
             <div className="flex items-end md:col-span-2">
               <button
                 type="submit"
@@ -542,13 +605,43 @@ export function Produtos() {
                     </td>
                     {gerente && (
                       <td className="p-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => iniciarEdicao(produto)}
-                          className="rounded-lg border border-purple-500/30 bg-purple-500/15 px-3 py-1.5 text-xs font-bold text-purple-300 hover:bg-purple-500/25 hover:border-purple-500/50 transition-all"
-                        >
-                          ✎ Editar
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => iniciarEdicao(produto)}
+                            title="Editar produto"
+                            className="rounded-lg border border-purple-500/30 bg-purple-500/15 px-2.5 py-1 text-xs font-bold text-purple-300 hover:bg-purple-500/25 transition-all"
+                          >
+                            ✎
+                          </button>
+                          {Number(produto.ativo) === 1 ? (
+                            <button
+                              type="button"
+                              onClick={() => inativarProduto(produto)}
+                              title="Desativar produto"
+                              className="rounded-lg border border-amber-500/30 bg-amber-500/15 px-2.5 py-1 text-xs font-bold text-amber-300 hover:bg-amber-500/25 transition-all"
+                            >
+                              Desativar
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => reativarProduto(produto)}
+                              title="Reativar produto"
+                              className="rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-all"
+                            >
+                              Reativar
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => excluirProduto(produto)}
+                            title="Excluir produto permanentemente"
+                            className="rounded-lg border border-rose-500/30 bg-rose-500/15 px-2.5 py-1 text-xs font-bold text-rose-300 hover:bg-rose-500/25 transition-all"
+                          >
+                            🗑
+                          </button>
+                        </div>
                       </td>
                     )}
                   </tr>

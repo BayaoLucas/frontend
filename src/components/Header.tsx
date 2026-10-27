@@ -61,6 +61,17 @@ export function Header() {
             </Link>
 
             <Link
+              to="/catalogo"
+              className={`rounded-lg px-3 py-1.5 font-medium transition-all ${
+                location.pathname === '/catalogo'
+                  ? 'border border-emerald-500/35 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.25)]'
+                  : 'text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300'
+              }`}
+            >
+              Catálogo
+            </Link>
+
+            <Link
               to="/produtos"
               className={`rounded-lg px-3 py-1.5 font-medium transition-all ${
                 location.pathname === '/produtos'

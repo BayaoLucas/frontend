@@ -17,10 +17,12 @@ const API_URL = (
     descricao: string | null;
     tamanho: string | null;
     cor: string | null;
-  genero?: string | null;
+    genero?: string | null;
     preco: string;
     estoque: number;
     ativo: number;
+    imagem_url?: string | null;
+    visivel_catalogo?: number;
   }
   
   export interface Cliente {

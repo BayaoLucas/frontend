@@ -27,6 +27,7 @@ export function Vendas() {
   const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [formaPagamento, setFormaPagamento] = useState('DINHEIRO');
   const [desconto, setDesconto] = useState('0');
+  const [parcelas, setParcelas] = useState(1);
 
   const [emailGerente, setEmailGerente] = useState('');
   const [senhaGerente, setSenhaGerente] = useState('');
@@ -503,6 +504,7 @@ export function Vendas() {
               value={formaPagamento}
               onChange={(e) => {
                 setFormaPagamento(e.target.value);
+                if (e.target.value !== 'CREDITO') setParcelas(1);
                 invalidarSimulacao();
               }}
               className="w-full aurora-input rounded-xl p-3 text-slate-100 outline-none"
@@ -513,6 +515,29 @@ export function Vendas() {
               <option value="CREDITO">Cartão de crédito</option>
             </select>
           </div>
+
+          {formaPagamento === 'CREDITO' && (
+            <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-4">
+              <label htmlFor="parcelas" className="mb-2 block text-sm font-semibold text-purple-200">
+                Número de parcelas no cartão de crédito
+              </label>
+              <select
+                id="parcelas"
+                value={parcelas}
+                onChange={(e) => setParcelas(Number(e.target.value))}
+                className="w-full aurora-input rounded-xl p-3 text-slate-100 outline-none"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
+                  const valorParcela = totalLocal > 0 ? (totalLocal / num).toFixed(2) : '0.00';
+                  return (
+                    <option key={num} value={num}>
+                      {num}x {num === 1 ? 'à vista' : 'sem juros'} - {formatarMoeda(valorParcela)} / mês
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          )}
 
           <div>
             <label

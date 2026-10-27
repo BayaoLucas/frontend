@@ -18,6 +18,7 @@ import './Styles/vendas.css';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Produtos } from './pages/Produtos';
+import { Catalogo } from './pages/Catalogo';
 import { Vendas } from './pages/Vendas';
 import { Usuarios } from './pages/Usuarios';
 
@@ -58,6 +59,7 @@ function App() {
 
             <Route element={<RotaProtegida />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/catalogo" element={<Catalogo />} />
               <Route path="/produtos" element={<Produtos />} />
               <Route path="/vendas" element={<Vendas />} />
               <Route path="/usuarios" element={<Usuarios />} />
