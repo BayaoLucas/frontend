@@ -47,6 +47,7 @@ export function Produtos() {
   const [pesquisa, setPesquisa] = useState('');
   const [filtroGenero, setFiltroGenero] = useState('');
   const [filtroTamanho, setFiltroTamanho] = useState('');
+  const [mostrarInativos, setMostrarInativos] = useState(true);
   const [erro, setErro] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [carregando, setCarregando] = useState(true);
@@ -74,6 +75,7 @@ export function Produtos() {
       const params = new URLSearchParams();
       if (pesquisa.trim()) params.append('termo', pesquisa.trim());
       if (filtroGenero) params.append('genero', filtroGenero);
+      if (gerente) params.append('incluir_inativos', 'true');
 
       const qs = params.toString();
       const caminho = qs ? `/produtos?${qs}` : '/produtos';
@@ -89,7 +91,7 @@ export function Produtos() {
     } finally {
       setCarregando(false);
     }
-  }, [pesquisa, filtroGenero]);
+  }, [pesquisa, filtroGenero, gerente]);
 
   useEffect(() => {
     const temporizador = window.setTimeout(() => {
@@ -126,24 +128,16 @@ export function Produtos() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  async function inativarProduto(produto: Produto) {
-    if (!confirm(`Deseja realmente desativar o produto "${produto.nome}"?`)) return;
+  async function toggleOcultarCatalogo(produto: Produto) {
+    const visivel = Number(produto.visivel_catalogo ?? 1) === 1;
     try {
-      await requisicao(`/produtos/${produto.id}/inativar`, { method: 'PATCH' });
-      setMensagem(`Produto "${produto.nome}" desativado com sucesso.`);
+      await requisicao(`/produtos/${produto.id}/${visivel ? 'ocultar-catalogo' : 'exibir-catalogo'}`, {
+        method: 'PATCH'
+      });
+      setMensagem(visivel ? `Produto "${produto.nome}" agora está oculto do catálogo.` : `Produto "${produto.nome}" agora está visível no catálogo.`);
       await carregarProdutos();
     } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro ao desativar produto.');
-    }
-  }
-
-  async function reativarProduto(produto: Produto) {
-    try {
-      await requisicao(`/produtos/${produto.id}/reativar`, { method: 'PATCH' });
-      setMensagem(`Produto "${produto.nome}" reativado com sucesso.`);
-      await carregarProdutos();
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro ao reativar produto.');
+      setErro(e instanceof Error ? e.message : 'Erro ao alterar visibilidade no catálogo.');
     }
   }
 
@@ -540,6 +534,18 @@ export function Produtos() {
               placeholder="Pesquisar por nome, código ou cor..."
               className="aurora-input w-full sm:w-60 rounded-xl p-2.5 text-sm text-slate-100 outline-none"
             />
+
+            {gerente && (
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300 bg-slate-900/50 border border-slate-700/60 px-3 py-2.5 rounded-xl">
+                <input
+                  type="checkbox"
+                  checked={mostrarInativos}
+                  onChange={(e) => setMostrarInativos(e.target.checked)}
+                  className="h-4 w-4 rounded border-slate-700"
+                />
+                Mostrar inativos
+              </label>
+            )}
           </div>
         </div>
 
@@ -566,8 +572,26 @@ export function Produtos() {
               <tbody>
                 {produtosFiltrados.map((produto) => (
                   <tr key={produto.id} className="border-b border-slate-800/60 transition-colors hover:bg-emerald-500/5">
-                    <td className="p-3 font-mono text-xs font-bold text-emerald-300">{produto.codigo}</td>
-                    <td className="p-3 font-medium text-slate-100">{produto.nome}</td>
+                    <td className="p-3 font-mono text-xs font-bold text-emerald-300">
+                      <div className="flex items-center gap-2">
+                        {produto.codigo}
+                        {Number(produto.ativo) === 0 && (
+                          <span className="rounded bg-rose-500/20 px-1.5 py-0.2 text-[10px] font-bold text-rose-300 border border-rose-500/30">
+                            INATIVO
+                          </span>
+                        )}
+                        {Number(produto.visivel_catalogo) === 0 && Number(produto.ativo) === 1 && (
+                          <span className="rounded bg-amber-500/20 px-1.5 py-0.2 text-[10px] font-bold text-amber-300 border border-amber-500/30">
+                            OCULTO
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-3 font-medium text-slate-100">
+                      <span className={Number(produto.ativo) === 0 ? 'line-through text-slate-400' : ''}>
+                        {produto.nome}
+                      </span>
+                    </td>
                     <td className="p-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         produto.genero === 'FEMININO'
@@ -610,36 +634,32 @@ export function Produtos() {
                             type="button"
                             onClick={() => iniciarEdicao(produto)}
                             title="Editar produto"
-                            className="rounded-lg border border-purple-500/30 bg-purple-500/15 px-2.5 py-1 text-xs font-bold text-purple-300 hover:bg-purple-500/25 transition-all"
+                            className="rounded-lg border border-purple-500/30 bg-purple-500/15 px-2.5 py-1 text-xs font-bold text-purple-300 hover:bg-purple-500/25 transition-all flex items-center gap-1"
                           >
-                            ✎
+                            <span>✎</span>
+                            <span>Editar</span>
                           </button>
-                          {Number(produto.ativo) === 1 ? (
-                            <button
-                              type="button"
-                              onClick={() => inativarProduto(produto)}
-                              title="Desativar produto"
-                              className="rounded-lg border border-amber-500/30 bg-amber-500/15 px-2.5 py-1 text-xs font-bold text-amber-300 hover:bg-amber-500/25 transition-all"
-                            >
-                              Desativar
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => reativarProduto(produto)}
-                              title="Reativar produto"
-                              className="rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-all"
-                            >
-                              Reativar
-                            </button>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => toggleOcultarCatalogo(produto)}
+                            title={Number(produto.visivel_catalogo ?? 1) === 1 ? 'Ocultar da vitrine do catálogo' : 'Exibir na vitrine do catálogo'}
+                            className={`rounded-lg border px-2.5 py-1 text-xs font-bold transition-all flex items-center gap-1 ${
+                              Number(produto.visivel_catalogo ?? 1) === 1
+                                ? 'border-amber-500/30 bg-amber-500/15 text-amber-300 hover:bg-amber-500/25'
+                                : 'border-cyan-500/30 bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25'
+                            }`}
+                          >
+                            <span>{Number(produto.visivel_catalogo ?? 1) === 1 ? '🙈' : '👁'}</span>
+                            <span>{Number(produto.visivel_catalogo ?? 1) === 1 ? 'Ocultar' : 'Exibir'}</span>
+                          </button>
                           <button
                             type="button"
                             onClick={() => excluirProduto(produto)}
                             title="Excluir produto permanentemente"
-                            className="rounded-lg border border-rose-500/30 bg-rose-500/15 px-2.5 py-1 text-xs font-bold text-rose-300 hover:bg-rose-500/25 transition-all"
+                            className="rounded-lg border border-rose-500/30 bg-rose-500/15 px-2.5 py-1 text-xs font-bold text-rose-300 hover:bg-rose-500/25 transition-all flex items-center gap-1"
                           >
-                            🗑
+                            <span>🗑</span>
+                            <span>Deletar</span>
                           </button>
                         </div>
                       </td>

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import {
   limparSessao,
+  obterCarrinhoSalvo,
   obterUsuarioSalvo,
   requisicao
 } from '../services/api';
@@ -12,10 +13,23 @@ export function Header() {
   const location = useLocation();
 
   const [saindo, setSaindo] = useState(false);
+  const [totalCarrinho, setTotalCarrinho] = useState(0);
 
   const usuario = obterUsuarioSalvo();
   const estaNoLogin = location.pathname === '/';
   const eGerente = usuario?.perfil === 'GERENTE';
+
+  useEffect(() => {
+    function atualizarContador() {
+      const itens = obterCarrinhoSalvo();
+      const count = itens.reduce((s, i) => s + i.quantidade, 0);
+      setTotalCarrinho(count);
+    }
+
+    atualizarContador();
+    window.addEventListener('carrinhoAtualizado', atualizarContador);
+    return () => window.removeEventListener('carrinhoAtualizado', atualizarContador);
+  }, []);
 
   async function sair() {
     setSaindo(true);
@@ -84,13 +98,18 @@ export function Header() {
 
             <Link
               to="/vendas"
-              className={`rounded-lg px-3 py-1.5 font-medium transition-all ${
+              className={`relative rounded-lg px-3 py-1.5 font-medium transition-all flex items-center gap-1.5 ${
                 location.pathname === '/vendas'
                   ? 'border border-emerald-500/35 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.25)]'
                   : 'text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300'
               }`}
             >
-              Vendas
+              <span>Vendas</span>
+              {totalCarrinho > 0 && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-black text-slate-950 shadow-[0_0_10px_rgba(52,211,153,0.6)] animate-pulse">
+                  {totalCarrinho}
+                </span>
+              )}
             </Link>
 
             {eGerente && (
@@ -106,15 +125,11 @@ export function Header() {
               </Link>
             )}
 
-            <span className="rounded-full border border-purple-500/30 bg-purple-500/15 px-3 py-1 text-xs font-semibold text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-              {usuario.nome} ({usuario.perfil})
-            </span>
-
             <button
               type="button"
               onClick={sair}
               disabled={saindo}
-              className="rounded-lg border border-rose-500/30 bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-200 transition-all hover:border-rose-500/50 hover:bg-rose-500/25 disabled:opacity-50"
+              className="ml-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-300 transition-all hover:bg-red-500/20 disabled:opacity-50"
             >
               {saindo ? 'Saindo...' : 'Sair'}
             </button>

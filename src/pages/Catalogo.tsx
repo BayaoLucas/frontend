@@ -1,30 +1,39 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
+  adicionarAoCarrinho,
   formatarMoeda,
+  obterCarrinhoSalvo,
   obterUsuarioSalvo,
   requisicao,
   type Produto
 } from '../services/api';
 
 export function Catalogo() {
+  const navigate = useNavigate();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
-  const [mensagem, setMensagem] = useState('');
   const [filtroGenero, setFiltroGenero] = useState('');
+  const [mostrarInativos, setMostrarInativos] = useState(true);
   const [termoBusca, setTermoBusca] = useState('');
-  const [processando, setProcessando] = useState<number | null>(null);
+  const [notificacao, setNotificacao] = useState<{ texto: string; sucesso: boolean } | null>(null);
+  const [totalItensCarrinho, setTotalItensCarrinho] = useState(0);
 
   const usuario = obterUsuarioSalvo();
   const gerente = usuario?.perfil === 'GERENTE';
+
+  const atualizarContador = useCallback(() => {
+    const itens = obterCarrinhoSalvo();
+    setTotalItensCarrinho(itens.reduce((acc, cur) => acc + cur.quantidade, 0));
+  }, []);
 
   const carregar = useCallback(async () => {
     setCarregando(true);
     setErro('');
     try {
-      // Gerentes veem todos os produtos (incluindo ocultos do catálogo), caixas só veem o catálogo
       const lista = gerente
-        ? await requisicao<Produto[]>('/produtos')
+        ? await requisicao<Produto[]>('/produtos?incluir_inativos=true')
         : await requisicao<Produto[]>('/produtos/catalogo');
       setProdutos(lista);
     } catch (e) {
@@ -34,56 +43,37 @@ export function Catalogo() {
     }
   }, [gerente]);
 
-  useEffect(() => { void carregar(); }, [carregar]);
+  useEffect(() => {
+    void carregar();
+    atualizarContador();
+    window.addEventListener('carrinhoAtualizado', atualizarContador);
+    return () => window.removeEventListener('carrinhoAtualizado', atualizarContador);
+  }, [carregar, atualizarContador]);
 
-  async function toggleCatalogo(produto: Produto) {
-    setProcessando(produto.id);
-    setMensagem('');
-    setErro('');
-    try {
-      const visivel = Number(produto.visivel_catalogo) === 1;
-      await requisicao(`/produtos/${produto.id}/${visivel ? 'ocultar-catalogo' : 'exibir-catalogo'}`, {
-        method: 'PATCH'
-      });
-      setMensagem(visivel ? `"${produto.nome}" ocultado do catálogo.` : `"${produto.nome}" exibido no catálogo.`);
-      await carregar();
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro ao alterar visibilidade.');
-    } finally {
-      setProcessando(null);
-    }
+  function dispararNotificacao(texto: string, sucesso: boolean) {
+    setNotificacao({ texto, sucesso });
+    window.setTimeout(() => {
+      setNotificacao(null);
+    }, 3500);
   }
 
-  async function inativar(produto: Produto) {
-    if (!confirm(`Desativar "${produto.nome}" permanentemente? O produto ficará indisponível.`)) return;
-    setProcessando(produto.id);
-    setErro('');
-    try {
-      await requisicao(`/produtos/${produto.id}/inativar`, { method: 'PATCH' });
-      setMensagem(`"${produto.nome}" desativado com sucesso.`);
-      await carregar();
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro ao desativar produto.');
-    } finally {
-      setProcessando(null);
-    }
+  function handleAdicionarAoCarrinho(produto: Produto) {
+    const res = adicionarAoCarrinho(produto, 1);
+    dispararNotificacao(res.mensagem, res.sucesso);
   }
 
-  async function reativar(produto: Produto) {
-    setProcessando(produto.id);
-    setErro('');
-    try {
-      await requisicao(`/produtos/${produto.id}/reativar`, { method: 'PATCH' });
-      setMensagem(`"${produto.nome}" reativado com sucesso.`);
-      await carregar();
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro ao reativar produto.');
-    } finally {
-      setProcessando(null);
+  function handleComprarDireto(produto: Produto) {
+    const res = adicionarAoCarrinho(produto, 1);
+    if (res.sucesso) {
+      navigate('/vendas');
+    } else {
+      dispararNotificacao(res.mensagem, false);
     }
   }
 
   const produtosFiltrados = produtos.filter(p => {
+    if (!gerente && Number(p.ativo) === 0) return false;
+    if (gerente && !mostrarInativos && Number(p.ativo) === 0) return false;
     const matchGenero = !filtroGenero || p.genero === filtroGenero;
     const termo = termoBusca.toLowerCase();
     const matchBusca = !termo ||
@@ -101,23 +91,63 @@ export function Catalogo() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative">
+      {/* Toast Notificação animada flutuante com estilo Aurora */}
+      {notificacao && (
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce">
+          <div
+            className={`aurora-glass-card rounded-2xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.5)] border flex items-center gap-3 ${
+              notificacao.sucesso
+                ? 'border-emerald-500/60 bg-emerald-950/80 text-emerald-200'
+                : 'border-rose-500/60 bg-rose-950/80 text-rose-200'
+            }`}
+          >
+            <span className="text-xl">{notificacao.sucesso ? '🛒' : '⚠️'}</span>
+            <div className="text-sm">
+              <p className="font-bold">{notificacao.sucesso ? 'Adicionado com sucesso!' : 'Atenção'}</p>
+              <p className="text-xs text-slate-300">{notificacao.texto}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setNotificacao(null)}
+              className="text-slate-400 hover:text-slate-100 ml-2 text-xs"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Cabeçalho */}
       <section className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            CATÁLOGO
+            CATÁLOGO & VITRINE
           </div>
           <h2 className="aurora-gradient-text text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Catálogo de Produtos
+            Catálogo Aurora
           </h2>
           <p className="mt-1 text-sm text-slate-400">
-            {gerente ? 'Gerencie a visibilidade dos produtos no catálogo.' : 'Explore nossa coleção Aurora.'}
+            Adicione itens ao carrinho ou compre diretamente.
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Botão de Atalho para o Carrinho / Vendas */}
+          {totalItensCarrinho > 0 && (
+            <button
+              type="button"
+              onClick={() => navigate('/vendas')}
+              className="rounded-xl border border-emerald-500/40 bg-emerald-500/20 px-4 py-2 text-xs font-black text-emerald-300 hover:bg-emerald-500/30 shadow-[0_0_20px_rgba(52,211,153,0.3)] transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span>🛒 Ver Carrinho</span>
+              <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-[10px] font-extrabold text-slate-950">
+                {totalItensCarrinho}
+              </span>
+            </button>
+          )}
+
           {/* Busca */}
           <input
             type="text"
@@ -138,6 +168,18 @@ export function Catalogo() {
             <option value="MASCULINO">👔 Masculino</option>
             <option value="UNISSEX">✨ Unissex</option>
           </select>
+
+          {gerente && (
+            <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300 bg-slate-900/50 border border-slate-700/60 px-3 py-2.5 rounded-xl">
+              <input
+                type="checkbox"
+                checked={mostrarInativos}
+                onChange={e => setMostrarInativos(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-700"
+              />
+              Mostrar inativos
+            </label>
+          )}
         </div>
       </section>
 
@@ -145,11 +187,6 @@ export function Catalogo() {
       {erro && (
         <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-4 text-sm text-rose-300">
           {erro}
-        </div>
-      )}
-      {mensagem && (
-        <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-emerald-300">
-          {mensagem}
         </div>
       )}
 
@@ -257,43 +294,30 @@ export function Catalogo() {
                     </span>
                   </div>
 
-                  {/* Ações de gerente */}
-                  {gerente && (
-                    <div className="flex flex-wrap gap-2 border-t border-slate-700/40 pt-3">
-                      {!inativo ? (
-                        <>
-                          <button
-                            type="button"
-                            disabled={processando === produto.id}
-                            onClick={() => toggleCatalogo(produto)}
-                            className={`flex-1 rounded-lg border px-2 py-1.5 text-xs font-bold transition-all disabled:opacity-50 ${estaOculto
-                              ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25'
-                              : 'border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20'
-                            }`}
-                          >
-                            {processando === produto.id ? '...' : estaOculto ? '👁 Exibir' : '🙈 Ocultar'}
-                          </button>
-                          <button
-                            type="button"
-                            disabled={processando === produto.id}
-                            onClick={() => inativar(produto)}
-                            className="flex-1 rounded-lg border border-rose-500/40 bg-rose-500/10 px-2 py-1.5 text-xs font-bold text-rose-300 hover:bg-rose-500/20 transition-all disabled:opacity-50"
-                          >
-                            {processando === produto.id ? '...' : '🗑 Desativar'}
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled={processando === produto.id}
-                          onClick={() => reativar(produto)}
-                          className="flex-1 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-2 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/20 transition-all disabled:opacity-50"
-                        >
-                          {processando === produto.id ? '...' : '✅ Reativar'}
-                        </button>
-                      )}
-                    </div>
-                  )}
+                  {/* Botões de Ação: Adicionar ao Carrinho + Comprar Direto */}
+                  <div className="border-t border-slate-700/40 pt-3 flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={semEstoque || inativo}
+                      onClick={() => handleAdicionarAoCarrinho(produto)}
+                      title="Adicionar ao carrinho e continuar navegando"
+                      className="flex-1 rounded-xl border border-emerald-500/40 bg-emerald-500/15 hover:bg-emerald-500/25 py-2.5 px-2 text-xs font-bold text-emerald-300 flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    >
+                      <span>🛒</span>
+                      <span>+ Carrinho</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={semEstoque || inativo}
+                      onClick={() => handleComprarDireto(produto)}
+                      title="Ir direto para o pagamento desta peça"
+                      className="aurora-btn flex-1 rounded-xl py-2.5 px-2 text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                      <span>⚡</span>
+                      <span>Comprar</span>
+                    </button>
+                  </div>
                 </div>
               </article>
             );
@@ -312,4 +336,3 @@ export function Catalogo() {
     </div>
   );
 }
-

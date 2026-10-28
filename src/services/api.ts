@@ -145,6 +145,48 @@ const API_URL = (
     localStorage.removeItem('ms2_token');
     localStorage.removeItem('ms2_usuario');
   }
+
+  // --- Gerenciamento do Carrinho Compartilhado ---
+  const CARRINHO_STORAGE_KEY = 'aurora_carrinho';
+
+  export function obterCarrinhoSalvo(): ItemCarrinho[] {
+    try {
+      const dados = localStorage.getItem(CARRINHO_STORAGE_KEY);
+      if (!dados) return [];
+      return JSON.parse(dados) as ItemCarrinho[];
+    } catch {
+      return [];
+    }
+  }
+
+  export function salvarCarrinho(carrinho: ItemCarrinho[]): void {
+    localStorage.setItem(CARRINHO_STORAGE_KEY, JSON.stringify(carrinho));
+    window.dispatchEvent(new Event('carrinhoAtualizado'));
+  }
+
+  export function adicionarAoCarrinho(produto: Produto, quantidade = 1): { sucesso: boolean; mensagem: string } {
+    const atual = obterCarrinhoSalvo();
+    const index = atual.findIndex(item => item.produto.id === produto.id);
+
+    const quantExistente = index >= 0 ? atual[index].quantidade : 0;
+    if (quantExistente + quantidade > produto.estoque) {
+      return { sucesso: false, mensagem: `Estoque insuficiente! Apenas ${produto.estoque} unidades disponíveis.` };
+    }
+
+    if (index >= 0) {
+      atual[index].quantidade += quantidade;
+    } else {
+      atual.push({ produto, quantidade });
+    }
+
+    salvarCarrinho(atual);
+    return { sucesso: true, mensagem: `"${produto.nome}" adicionado ao carrinho!` };
+  }
+
+  export function limparCarrinho(): void {
+    localStorage.removeItem(CARRINHO_STORAGE_KEY);
+    window.dispatchEvent(new Event('carrinhoAtualizado'));
+  }
   
   export function formatarMoeda(valor: string | number): string {
     return Number(valor).toLocaleString('pt-BR', {

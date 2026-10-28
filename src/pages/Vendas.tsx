@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-
+import { useSearchParams } from 'react-router-dom';
 import {
   formatarMoeda,
+  limparCarrinho,
+  obterCarrinhoSalvo,
   obterUsuarioSalvo,
   requisicao,
+  salvarCarrinho,
   type Cliente,
   type Produto,
   type ItemCarrinho,
@@ -19,9 +22,10 @@ interface RespostaVenda {
 }
 
 export function Vendas() {
+  const [searchParams] = useSearchParams();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [carrinho, setCarrinho] = useState<ItemCarrinho[]>([]);
+  const [carrinho, setCarrinho] = useState<ItemCarrinho[]>(() => obterCarrinhoSalvo());
 
   const [produtoSelecionado, setProdutoSelecionado] = useState('');
   const [clienteSelecionado, setClienteSelecionado] = useState('');
@@ -85,6 +89,23 @@ export function Vendas() {
   useEffect(() => {
     void carregarDados();
   }, [carregarDados]);
+
+  useEffect(() => {
+    const pId = searchParams.get('produtoId');
+    if (pId && produtos.length > 0) {
+      const prod = produtos.find(p => p.id === Number(pId));
+      if (prod && prod.estoque > 0) {
+        setCarrinho(atual => {
+          if (atual.some(item => item.produto.id === prod.id)) return atual;
+          return [...atual, { produto: prod, quantidade: 1 }];
+        });
+      }
+    }
+  }, [searchParams, produtos]);
+
+  useEffect(() => {
+    salvarCarrinho(carrinho);
+  }, [carrinho]);
 
   function invalidarSimulacao() {
     setSimulacao(null);
@@ -285,6 +306,7 @@ export function Vendas() {
       );
 
       setCarrinho([]);
+      limparCarrinho();
       setClienteSelecionado('');
       setFormaPagamento('DINHEIRO');
       setDesconto('0');
