@@ -1,4 +1,5 @@
 Aurora Vestuário
+Criado por: Lucas Bayão e Pedro Henrique
 Sistema web para gerenciamento de produtos, catálogo e vendas de uma loja de vestuário. O frontend utiliza React e TypeScript e apresenta uma identidade visual escura inspirada em auroras boreais, com gradientes, efeitos de luz e fundo animado.
 Este repositório contém o frontend. O acesso a dados reais depende do backend e do banco de dados configurados separadamente.
 
@@ -16,6 +17,7 @@ Sumário
 - Scripts
 - Integração com o backend
 - Segurança e observações
+
 Visão geral
 O Aurora Vestuário reúne telas para autenticação, consulta de produtos, visualização de catálogo, operação de vendas e gerenciamento de usuários. É uma Single Page Application (SPA), com navegação por rotas e comunicação HTTP com uma API.
 Funcionalidades
